@@ -22,15 +22,14 @@
     (map #(str/split % #"") str-variants)))
 
 (defn diff-chars [a b]
-  (letfn [(compare-chars [[ins, dels] [x y]]
+  (letfn [(compare-chars [[ins, del] [x y]]
             (cond
-              (> x y) [(inc ins) dels]
-              (< x y) [ins (inc dels)]
-              :else [ins dels]))]
+              (> x y) [(inc ins) del]
+              (< x y) [ins (inc del)]
+              :else [ins del]))]
     (->> [a, b]
          (map #(get digit-codes %))
-         (apply interleave)
-         (partition 2)
+         (apply map vector)
          (reduce compare-chars [0 0]))))
 
 (defn solution []
