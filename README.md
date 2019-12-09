@@ -5,5 +5,7 @@ To check that it works he inserted some values.
 ```
 25 * 69 = 1725
 ```
+![img](display.jpg)
+
 He actualy misconnected 5 diodes. They light in wrong positions.
 What numbers John may inserted to check the device?
