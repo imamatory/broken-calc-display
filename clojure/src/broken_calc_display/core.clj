@@ -21,31 +21,30 @@
                        (format "%02d%02d%04d" a b (* a b)))]
     (map #(str/split % #"") str-variants)))
 
+(defn diff-digits [[ins, del] [x y]]
+  (cond
+    (> x y) [(inc ins) del]
+    (< x y) [ins (inc del)]
+    :else [ins del]))
+
 (defn diff-chars [a b]
-  (letfn [(compare-chars [[ins, del] [x y]]
-            (cond
-              (> x y) [(inc ins) del]
-              (< x y) [ins (inc del)]
-              :else [ins del]))]
-    (->> [a, b]
-         (map #(get digit-codes %))
-         (apply map vector)
-         (reduce compare-chars [0 0]))))
+  (->> [a, b]
+       (map #(get digit-codes %))
+       (apply map vector)
+       (reduce diff-digits [0 0])))
+
+(defn diff-numbers [a b]
+  (->> (map vector a b)
+       (map #(apply diff-chars %))
+       (apply map +)))
 
 (defn solution []
- (letfn [(diff-digits [a b]
-           (->> (map vector a b)
-                (map #(apply diff-chars %))
-                (apply map +)))
-         (every-eq-five? [coll] (every? #(= % 5) coll))
-         (diffs-with-five-bars? [x]
-           (every-eq-five? (diff-digits x src-num)))]
-   (->> (take 10000 variants)
-        (filter diffs-with-five-bars?)))
- )
-
+  (letfn [(every-eq-five? [coll] (every? #(= % 5) coll))
+          (five-segments-changed? [x]
+            (-> x (diff-numbers src-num) (every-eq-five?)))]
+    (filter five-segments-changed? variants)))
 
 (defn -main []
   (doseq [result (solution)]
-    (println result))
-  )
+
+    (println result)))
